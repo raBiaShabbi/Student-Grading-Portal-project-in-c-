@@ -1,0 +1,580 @@
+#include<iostream>
+#include<cmath>
+#include<iomanip>
+#include<cctype>
+using namespace std;
+
+string name[3];
+int id[3];
+string phone[3];
+double gpa[3];
+
+bool valid_name(string &name) //function to check that name string should contain alphabets only
+{
+    for(int i=0; i<name.length(); i++)
+    {
+        if(!isalpha(name[i])) //function to check whether there is alphabets only or not
+        {
+            return 0;
+        }
+    }
+    return 1;
+}
+
+bool valid_id(int id[],int current_size,int new_id)//function to check id
+{
+    if(new_id<=0)
+    {
+        cout<<"Invalid ID.Kindly enter a positive integer."<<endl;
+        return 0;
+    }
+    for(int i=0; i<current_size; i++)
+    {
+        if(id[i]==new_id)
+        {
+            cout<<"This ID is already assigned.Kindly change the ID."<<endl;
+            return 0;
+        }
+    }
+    if(current_size>0&&new_id!=id[current_size-1]+1)
+    {
+        cout<<"Ids should be in sequential order"<<endl;
+        cout<<"Expected ID:"<<id[current_size-1]+1<<endl;
+        return 0;
+    }
+    return 1;
+}
+
+bool valid_phone(string number)
+{
+    // Check if all characters are digits and the length is 11
+    if(number.length() == 11)
+    {
+        for (int i=0; i<number.length(); i++)
+        {
+            if(!isdigit(number[i]))
+            {
+                return 0;
+            }
+        }
+        return 1;
+    }
+}
+
+
+bool valid_gpa(double gpa)//function to check GPA
+{
+    if(gpa<0.0||gpa>4.0)
+    {
+        return 0;
+    }
+    return 1;
+}
+
+void input(string name[],int id[],string phone[],double gpa[],int size)//function to input student attributes in arrays
+{
+    for(int i=0; i<3; i++)
+    {
+        do
+        {
+            cout<<"Enter the name of the student."<<endl<<i+1<<" ";
+            cin>>name[i];
+            if(valid_name(name[i])==0)
+            {
+                cout<<"Invalid name. Kindly enter the name again."<<endl;
+
+            }
+            name[i][0]=toupper(name[i][0]);/*To capitalize 1st letter of the name.
+                                        this access ith string in the name array and capitalize its 1st letter*/
+        }
+        while(!valid_name(name[i]));
+
+        do
+        {
+            cout<<"Enter the id of the student."<<endl<<i+1<<" ";
+            cin>>id[i];
+        }
+        while(valid_id(id,i,id[i])==0);
+
+        do
+        {
+            cout<<"Enter the phone no. of the student"<<endl;;
+            cin>>phone[i];
+            if(!valid_phone(phone[i]))
+            {
+                cout<<"Invalid phone number.It should be consists of 11 digits only."<<endl;
+            }
+        }
+        while(!valid_phone(phone[i]));
+
+        do
+        {
+            cout<<"Enter the GPA of the student."<<endl<<i+1<<" ";
+            cin>>gpa[i];
+            if(valid_gpa(gpa[i])==0)
+            {
+                cout<<"Invalid GPA!!! Enter a valid GPA which should not exceed 4 and should not be less than 0.0"<<endl;
+            }
+        }
+        while(!valid_gpa(gpa[i]));
+    }
+}
+
+void display_students(string name[],int id[],string phone[],double gpa[],int size)//function to display student attributes
+{
+    cout<<setw(15)<<"Name"<<setw(10)<<"ID"<<setw(15)<<"Phone"<<setw(10)<<"GPA"<<endl;
+    cout<<"---------------------------------------------------------"<<endl;
+    for(int i=0; i<3; i++)
+    {
+        cout<<setw(15)<<name[i]<<setw(10)<<id[i]<<setw(15)<<phone[i]<<setw(10)<<gpa[i]<<endl;
+    }
+}
+
+void add_student(string name[],int id[],string phone[],double gpa[])//function to add student in a class
+{
+    cout<<"Student added successfully."<<endl;
+    cout<<"Class completed.Can't add more students"<<endl;
+    display_students(name,id,phone,gpa,3);
+
+}
+
+void remove_student(string name[],int id[],string phone[],double gpa[],int size)//function to remove student from the class
+{
+    char response='o';
+    do
+    {
+        int remove_id=0;
+        cout<<"Enter the ID of the student to be removed"<<endl;
+        cin>>remove_id;
+        bool found=0;
+        for(int i=0; i<size; i++)
+        {
+            if(id[i]==remove_id)
+            {
+                id[i]=-1;//set id to -1 to indicate student has been removed.
+                cout<<"Student with ID "<<remove_id<<" has been removed."<<endl;
+                found=1;
+                break;// No need to continue searching once updated
+            }
+        }
+        if (!found)
+        {
+            cout<<"No student which such ID exists"<<endl;
+        }
+
+        cout<<"Do you want to remove any other student?"<<endl;
+        cin>>response;
+    }
+
+    while(response=='y'||response=='Y');
+}
+
+bool update_contact_info(int id[],string phone[],int size)
+{
+    char response='o';
+    do
+    {
+        int Id=0;
+        string updated_contact;
+        bool found=0;
+
+        cout<<"Enter the id of the student whom contact no. should change?"<<endl;
+        cin>>Id;
+
+        cout<<"Enter the new contact no. of the student."<<endl;
+        cin>>updated_contact;
+
+        while(valid_phone(updated_contact)!=1)
+        {
+            cout<<"Invalid contact no!!!Kindly enter a valid contact no."<<endl;
+            cin>>updated_contact;
+        }
+
+        for(int i=0; i<3; i++)
+        {
+            if(id[i]==Id)
+            {
+                phone[i]=updated_contact;
+                found=1;
+                cout<<"Contact no. of the student having ID "<<Id<<" is updated."<<endl;
+                break;
+            }
+        }
+
+        if(!found)
+        {
+            cout<<"No student is found with such ID "<<Id<<"."<<endl;
+            cout<<"Contact no. has not been updated"<<endl;
+        }
+
+        cout<<"Do you want to update phone no. of any other student?"<<endl;
+        cin>>response;
+    }
+    while(response=='y'||response=='Y');
+    return true;
+}
+
+bool valid_grade(char grade)
+{
+    grade=toupper(grade);
+    if(grade!='A'&& grade!='B'&& grade!='C' &&grade!='F')
+    {
+        cout<<"INVALID GRADES!!!Enter your grade again"<<endl;
+        return 0;
+    }
+    return 1;
+}
+
+double calculate_gpa(int grade1,int grade2, int grade3)
+{
+    int grade_point1,grade_point2,grade_point3=0;
+    switch(toupper(grade1))
+    {
+    case 'A':
+    {
+        grade_point1=4;
+    }
+    break;
+    case 'B':
+    {
+        grade_point1=3;
+    }
+    break;
+    case 'C':
+    {
+        grade_point1=2;
+    }
+    break;
+    default:
+    {
+        grade_point1=0;
+    }
+    }
+    switch(toupper(grade2))
+    {
+    case 'A':
+    {
+        grade_point2=4;
+    }
+    break;
+    case 'B':
+    {
+        grade_point2=3;
+    }
+    break;
+    case 'C':
+    {
+        grade_point2=2;
+    }
+    break;
+    default:
+    {
+        grade_point2=0;
+    }
+    }
+    switch(toupper(grade3))
+    {
+    case 'A':
+    {
+        grade_point3=4;
+    }
+    break;
+    case 'B':
+    {
+        grade_point3=3;
+    }
+    break;
+    case 'C':
+    {
+        grade_point3=2;
+    }
+    break;
+    default:
+    {
+        grade_point3=0;
+    }
+    }
+
+    double total_grade_points= grade_point1*3+grade_point2*3+grade_point3*3;
+    double gpa=total_grade_points/12;
+    return gpa;
+}
+
+void gpa_(char grade1,char grade2,char grade3,double gpa[],int size)
+{
+    for(int i=0; i<3; i++)
+    {
+        do
+        {
+            cout<<"Enter the grade of first subject for student "<<i+1<<endl;
+            cin>>grade1;
+        }
+        while(valid_grade(grade1)==0);
+
+        do
+        {
+            cout<<"Enter the grade of second subject for student "<<i+1<<endl;
+            cin>>grade2;
+        }
+        while(valid_grade(grade2)==0);
+
+        do
+        {
+            cout<<"Enter the grade of third subject for student "<<i+1<<endl;
+            cin>>grade3;
+        }
+        while(valid_grade(grade3)==0);
+
+        gpa[i]=calculate_gpa(grade1, grade2, grade3);
+
+        if(valid_gpa(gpa[i])==0)
+        {
+            cout<<"Invalid GPA is calculated!!! Enter the grades precisely."<<endl;
+            i--;
+            continue;
+        }
+    }
+
+}
+
+void display_info(string name[],int id[],string phone[],double gpa[],string &target_name,bool &found,int size)
+{
+    cout<<setw(15)<<"Name"<<setw(10)<<"ID"<<setw(15)<<"Phone"<<setw(10)<<"GPA"<<endl;
+    cout<<"---------------------------------------------------------"<<endl;
+    for(int i=0; i<size; i++)
+    {
+        if(name[i]==target_name)
+        {
+            cout<<setw(15)<<name[i]<<setw(10)<<id[i]<<setw(15)<<phone[i]<<setw(10)<<gpa[i]<<endl;
+            found=1;
+            break;
+        }
+    }
+    if(!found)
+    {
+        cout<<"No student found with this name."<<endl;
+    }
+}
+
+void display_student_by_id(string name[],int id[],string phone[],double gpa[],int &target_id,bool &found,int size)
+{
+    cout<<setw(15)<<"Name"<<setw(10)<<"ID"<<setw(15)<<"Phone"<<setw(10)<<"GPA"<<endl;
+    cout<<"---------------------------------------------------------"<<endl;
+    for(int i=0; i<size; i++)
+    {
+        if(id[i]==target_id)
+        {
+            cout<<setw(15)<<name[i]<<setw(10)<<id[i]<<setw(15)<<phone[i]<<setw(10)<<gpa[i]<<endl;
+            found=1;
+            break;
+        }
+    }
+
+    if(!found)
+    {
+        cout<<"No student found with this ID"<<endl;
+    }
+}
+
+void generate_display_class_report(string name[],int id[],string phone[],double gpa[],int size)
+{
+    double total_gpa=0.0;
+
+    for(int i=0;i<size;i++)
+    {
+        total_gpa+=gpa[i];
+    }
+    double average_gpa=total_gpa/size;
+
+    int highest_gpa_index=0;
+    int lowest_gpa_index=0;
+
+    for(int i=0;i<size;i++)
+    {
+        if(gpa[i]>gpa[highest_gpa_index])
+        {
+            highest_gpa_index=gpa[i];
+        }
+
+        if(gpa[i]<gpa[lowest_gpa_index])
+        {
+            lowest_gpa_index=gpa[i];
+        }
+    }
+    display_students(name,id,phone,gpa,3);
+    cout<<"-----------------------------------------------------------------------------------------------"<<endl;
+    cout<<setw(15)<<"Total GPA"<<setw(25)<<"Average GPA"<<setw(25)<<"Highest GPA"<<setw(25)<<"Lowest GPA"<<endl;
+    cout<<"-----------------------------------------------------------------------------------------------"<<endl;
+    cout<<setw(15)<<total_gpa<<setw(25)<<average_gpa<<setw(25)<<gpa[highest_gpa_index]<<setw(25)<<gpa[lowest_gpa_index]<<endl;
+}
+void rank_students(string name[],int id[],string phone[],double gpa[],int size)
+{
+    for(int i=0;i<size;i++)
+    {
+        for(int j=0;j<size-1;j++)
+        {
+            if(gpa[j]<gpa[j+1])
+            {
+                swap(name[j],name[j+1]);
+                swap(id[j],id[j+1]);
+                swap(phone[j],phone[j+1]);
+                swap(gpa[j],gpa[j+1]);
+            }
+        }
+    }
+}
+
+void display_top_performers(string name[],int id[],string phone[],double gpa[],int size,int &top_n)
+{
+    if(top_n>size)
+    {
+        cout<<"ERROR!!!The class doesn't contain that much students"<<endl;
+    }
+    else
+    {
+         rank_students(name,id,phone,gpa,3);
+         cout<<"Top "<<top_n<<" performers of the class and their details is:"<<endl;
+         cout<<setw(15)<<"Name"<<setw(10)<<"ID"<<setw(15)<<"Phone"<<setw(10)<<"GPA"<<endl;
+         cout<<"---------------------------------------------------------"<<endl;
+         for(int i=0;i<top_n;i++)
+         {
+            cout<<setw(15)<<name[i]<<setw(10)<<id[i]<<setw(15)<<phone[i]<<setw(10)<<gpa[i]<<endl;
+         }
+    }
+}
+
+void display_bar_chart(string name[],double gpa[],int size)
+{
+    rank_students(name,id,phone,gpa,3);
+    int bar_width=25;
+     for(int i=0;i<size;i++)
+         {
+            cout<<setw(5)<<name[i]<<setw(5)<<gpa[i]<<"|";
+            int bar_length=gpa[i]/4*25;
+            for(int j=0;j<bar_length;j++)
+            {
+                cout<<"*";
+            }
+            cout<<endl;
+         }
+}
+
+int main()
+{
+    char response='o';
+    do
+    {
+        int tasks=0;
+        cout<<setw(75)<<"------------------------------------------------"<<endl;
+        cout<<setw(75)<<"|     WELCOME TO THE GRADE MANAGEMENT SYSTEM    |"<<endl;
+        cout<<setw(75)<<"------------------------------------------------"<<endl;
+        cout<<"1. Add a new student"<<endl;
+        cout<<"2. Remove any student."<<endl;
+        cout<<"3. Update contact information."<<endl;
+        cout<<"4. Calculate GPA."<<endl;
+        cout<<"5. Check the information of any student."<<endl;
+        cout<<"6. Generate class report."<<endl;
+        cout<<"7. Rank students based on their GPAs."<<endl;
+        cout<<"8. To display top performers."<<endl;
+        cout<<"9. To search any particular student."<<endl;
+        cout<<"10. Representation of class statistics graphically."<<endl;
+        cin>>tasks;
+
+
+        switch(tasks)
+        {
+        case 1:
+        {
+            input(name,id,phone,gpa,3);
+            add_student(name,id,phone,gpa);
+        }
+        break;
+        case 2:
+        {
+            remove_student(name,id,phone,gpa,3);
+            display_students(name,id,phone,gpa,3);
+        }
+        break;
+        case 3:
+        {
+            update_contact_info(id,phone,3);
+            display_students(name,id,phone,gpa,3);
+        }
+        break;
+        case 4:
+        {
+            char grade1,grade2,grade3;
+            gpa_(grade1,grade2,grade3,gpa,3);
+            display_students(name,id,phone,gpa,3);
+        }
+        break;
+        case 5:
+        {
+            string target_name;
+            bool found=0;
+            do
+            {
+                cout<<"Enter the name of the student whom details you want to check"<<endl;
+                cin>>target_name;
+                target_name[0]=toupper(target_name[0]);
+                display_info(name,id,phone,gpa,target_name,found,3);
+
+                cout<<"Do you want details of other student?"<<endl;
+                cin>>response;
+            }
+            while(response=='y'||response=='Y'||valid_name(target_name)==0||!found);
+
+        }
+        break;
+        case 6:
+        {
+            generate_display_class_report(name,id,phone,gpa,3);
+        }
+        break;
+        case 7:
+        {
+           rank_students(name,id,phone,gpa,3);
+           cout<<"Ranking of students from highest to lowest GPA is as follows:"<<endl;
+           display_students(name,id,phone,gpa,3);
+        }
+        break;
+        case 8:
+        {
+            int top_n=0;
+            cout<<"How many top performers information you want to check?"<<endl;
+            cin>>top_n;
+            display_top_performers(name,id,phone,gpa,3,top_n);
+        }
+        break;
+        case 9:
+        {
+            bool found=0;
+            do
+            {
+                int target_id=0;
+                cout<<"Enter the id of the student you want to find"<<endl;
+                cin>>target_id;
+                display_student_by_id(name,id,phone,gpa,target_id,found,3);
+
+                cout<<"Do you want to find any other student?"<<endl;
+                cin>>response;
+            }
+            while(response=='y'||response=='Y'||!found);
+        }
+        break;
+        case 10:
+        {
+            display_bar_chart(name,gpa,3);
+        }
+        break;
+        default:
+        {
+            cout<<"WRONG SELECTION!!! There's no such option available."<<endl;
+        }
+        }
+
+        cout<<"Do you want to check the grading system again?"<<endl;
+        cin>>response;
+    }
+    while(response=='y'||response=='Y');
+}
